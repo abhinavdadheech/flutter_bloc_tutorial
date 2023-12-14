@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc_tutorial/cubit/counter_cubit.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -9,9 +10,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final counter = CounterCubit().state;
+  final counterCubit = CounterCubit();
   @override
   Widget build(BuildContext context) {
+    final counter = counterCubit.state;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -24,17 +26,40 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
-            Text(
-              '$counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            BlocBuilder<CounterCubit, int>(
+                bloc: counterCubit,
+                builder: (context, counter) {
+                  return Text(
+                    '$counter',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  );
+                }),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: () {
+              counterCubit.increament();
+              //setState(() {});
+            },
+            tooltip: 'Increment',
+            child: const Icon(Icons.add),
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          FloatingActionButton(
+            onPressed: () {
+              counterCubit.decrement();
+              //setState(() {});
+            },
+            tooltip: 'Decrement',
+            child: const Icon(Icons.minimize),
+          ),
+        ],
       ),
     );
   }
